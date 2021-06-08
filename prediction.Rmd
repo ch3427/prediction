@@ -1,25 +1,8 @@
 ---
-title: "HUDK4051: Prediction - Comparing Trees"
+title: "Prediction - Comparing Trees"
 author: "Christina Huang"
 output: html_document
 ---
-
-In this assignment you will modelling student data using three flavors of tree algorithm: CART, C4.5 and C5.0. We will be using these algorithms to attempt to predict which students drop out of courses. Many universities have a problem with students over-enrolling in courses at the beginning of semester and then dropping most of them as the make decisions about which classes to attend. This makes it difficult to plan for the semester and allocate resources. However, schools don't want to restrict the choice of their students. One solution is to create predictions of which students are likley to drop out of which courses and use these predictions to inform semester planning. 
-
-In this assignment we will be using the tree algorithms to build models of which students are likely to drop out of which classes. 
-
-## Software
-
-In order to generate our models we will need several packages. The first package you should install is [caret](https://cran.r-project.org/web/packages/caret/index.html).
-
-There are many prediction packages available and they all have slightly different syntax. caret is a package that brings all the different algorithms under one hood using the same syntax. 
-
-We will also be accessing an algorithm from the [Weka suite](https://www.cs.waikato.ac.nz/~ml/weka/). Weka is a collection of machine learning algorithms that have been implemented in Java and made freely available by the University of Waikato in New Zealand. To access these algorithms you will need to first install both the [Java Runtime Environment (JRE) and Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html) on your machine. You can then then install the [RWeka](https://cran.r-project.org/web/packages/RWeka/index.html) package within R.
-
-**Weka requires Java and Java causes problems. If you cannot install Java and make Weka work, please follow the alternative instructions at line 121**
-(Issue 1: failure to install RWeka/RWekajars, paste "sudo R CMD javareconf" into terminal and try to install again)
-
-The last package you will need is [C50](https://cran.r-project.org/web/packages/C50/index.html).
 
 ```{r}
 
@@ -30,21 +13,9 @@ library (ggplot2)
 #install.packages("RWeka")
 #install.packages("C50")
 
-```
-
-## Data
-
-The data comes from a university registrar's office. The code book for the variables are available in the file code-book.txt. Examine the variables and their definitions.
-
-Upload the drop-out.csv data into R as a data frame. 
-
 ```{r}
 
 DF1 <- data.frame (read.csv("drop-out.csv"))
-
-```
-
-The next step is to separate your data set into a training set and a test set. Randomly select 25% of the students to be the test data set and leave the remaining 75% for your training data set. (Hint: each row represents an answer, not a single student.)
 
 ```{r}
 
@@ -67,13 +38,6 @@ testing <- DF1 [-trainData,]
 summary (training)
 summary (testing)
 
-```
-
-For this assignment you will be predicting the student level variable "complete". 
-(Hint: make sure you understand the increments of each of your chosen variables, this will impact your tree construction)
-
-Visualize the relationships between your chosen variables as a scatterplot matrix.  Save your image as a .pdf named scatterplot_matrix.pdf. Based on this visualization do you see any patterns of interest? Why or why not?
-
 ```{r}
 
 #install.packages("GGally")
@@ -83,16 +47,6 @@ DF2 <- select (DF1, -complete, -international, -online)
 DF2
 pairs (DF2)
 dev.off ()
-
-##students with lower entrance test score have higher dropout rates
-
-```
-
-## CART Trees
-
-You will use the [rpart package](https://cran.r-project.org/web/packages/rpart/rpart.pdf) to generate CART tree models.
-
-Construct a classification tree that predicts complete using the caret package.
 
 ```{r}
 
@@ -126,17 +80,6 @@ cartFit <- train(complete ~ ., #Define which variable to predict
 cartFit
 plot(cartFit)
 
-
-
-```
-
-Describe important model attributes of your tree. Do you believe it is a successful model of student performance, why/why not?
-##courses_taken - high accuracy, therefore successful model
-
-Can you use the sensitivity and specificity metrics to calculate the F1 metric?
-
-Now predict results from the test data and describe important attributes of this test. Do you believe it is a successful model of student performance, why/why not?
-
 ```{r}
 testing2 <- testing [,c(2:10)] #Remove the student_id variable that we do not want to use in the model
 
@@ -146,11 +89,6 @@ cartClasses <- predict(cartFit, newdata = testing2)
 #Generate model statistics
 confusionMatrix(data = cartClasses, as.factor(testing2$complete))
 
-```
-
-## Conditional Inference Trees
-
-Train a Conditional Inference Tree using the `party` package on the same training data and examine your results.
 ```{r}
 
 library (party)
@@ -184,18 +122,6 @@ condClasses <- predict(condFit, newdata = testing3)
 #Generate model statistics
 confusionMatrix(data = condClasses, as.factor(testing3$complete))
 
-```
-Describe important model attributes of your tree. Do you believe it is a successful model of student performance, why/why not?
-##course_taken, entrance_test_score - high accuracy, therefore successful model
-
-What does the plot represent? What information does this plot tell us?
-
-Now test your new Conditional Inference model by predicting the test data and generating model fit statistics.
-
-There is an updated version of the C4.5 model called C5.0, it is implemented in the C50 package. What improvements have been made to the newer version? 
-
-Install the C50 package, train and then test the C5.0 model on the same data.
-
 ```{r}
 
 require (C50)
@@ -219,19 +145,8 @@ c50Classes <- predict(c50Fit, newdata = testing3)
 #Generate model statistics
 confusionMatrix(data = c50Classes, as.factor(testing3$complete))
 
-```
-
-## Compare the models
-
-caret allows us to compare all three models at once.
 
 ```{r}
 resamps <- resamples(list(cart = cartFit, condinf = condFit, cfiveo = c50Fit))
 summary(resamps)
 ```
-
-What does the model summary tell us? Which model do you believe is the best?
-##c50
-
-Which variables (features) within your chosen model are important, do these features provide insights that may be useful in solving the problem of students dropping out of courses?
-##courses_taken
