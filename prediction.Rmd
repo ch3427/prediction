@@ -13,13 +13,9 @@ library (ggplot2)
 #install.packages("RWeka")
 #install.packages("C50")
 
-```{r}
-
 DF1 <- data.frame (read.csv("drop-out.csv"))
 
-```{r}
-
-#install.packages('caret', dependencies = TRUE)
+install.packages('caret', dependencies = TRUE)
 
 library(caret)
 
@@ -38,17 +34,13 @@ testing <- DF1 [-trainData,]
 summary (training)
 summary (testing)
 
-```{r}
-
-#install.packages("GGally")
+install.packages("GGally")
 
 pdf(file = "scatterplot_matrix.pdf")
 DF2 <- select (DF1, -complete, -international, -online)
 DF2
 pairs (DF2)
 dev.off ()
-
-```{r}
 
 library (rpart)
 
@@ -80,7 +72,6 @@ cartFit <- train(complete ~ ., #Define which variable to predict
 cartFit
 plot(cartFit)
 
-```{r}
 testing2 <- testing [,c(2:10)] #Remove the student_id variable that we do not want to use in the model
 
 #Generate prediction using previously trained model
@@ -88,8 +79,6 @@ cartClasses <- predict(cartFit, newdata = testing2)
 
 #Generate model statistics
 confusionMatrix(data = cartClasses, as.factor(testing2$complete))
-
-```{r}
 
 library (party)
 require (party)
@@ -122,8 +111,6 @@ condClasses <- predict(condFit, newdata = testing3)
 #Generate model statistics
 confusionMatrix(data = condClasses, as.factor(testing3$complete))
 
-```{r}
-
 require (C50)
 
 #Define the model
@@ -138,15 +125,12 @@ c50Fit <- train(complete ~ ., #Define which variable to predict
 c50Fit  
 plot (c50Fit)
   
-  
 #Generate prediction using previously trained model
 c50Classes <- predict(c50Fit, newdata = testing3)
 
 #Generate model statistics
 confusionMatrix(data = c50Classes, as.factor(testing3$complete))
 
-
-```{r}
 resamps <- resamples(list(cart = cartFit, condinf = condFit, cfiveo = c50Fit))
 summary(resamps)
 ```
