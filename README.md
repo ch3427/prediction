@@ -18,7 +18,9 @@ The data (drop-out.csv) comes from a university registrar's office. The code boo
 * Randomly select 25% of the students to be the test data set and leave the remaining 75% for training data set
 * Predict the student level variable "complete"
 * Visualize the relationships between the chosen variables as a scatterplot matrix
+* 
 ![image](https://user-images.githubusercontent.com/70524046/121271258-4cd87780-c891-11eb-9a19-feaeb39f0b46.png)
+
 * Construct a classification tree that predicts complete using the caret package
 * Train a Conditional Inference Tree using the `party` package on the same training data
 * Install the C50 package, train and then test the C5.0 model on the same data
