@@ -8,9 +8,9 @@ In this project, I build models to predict student course dropout and then compa
 
 ## Resources
 
-[R]
+[R](https://www.r-project.org/)
 
-[RStudio]
+[RStudio](https://www.rstudio.com/)
 
 [The caret package](https://topepo.github.io/caret/train-models-by-tag.html)
 
